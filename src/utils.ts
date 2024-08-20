@@ -64,4 +64,20 @@ async function sleep(ms: number) {
   return new Promise<void>(resolve => setTimeout(resolve, ms))
 }
 
-export { isZipped, log, mergeConfig, sleep, serve, filterUrl }
+function isValidPayload(payload: { body: Buffer | null; headers: Record<string, any> | null }): boolean {
+  const MIN_VALID_BODY_LENGTH = 2
+  const INVALID_FIRST_BYTE = 0
+  const INVALID_SECOND_BYTE = 0
+
+  if (!payload || !payload.body) return false
+
+  const { body } = payload
+  const isInvalidBody = 
+    body.length <= MIN_VALID_BODY_LENGTH &&
+    body[0] === INVALID_FIRST_BYTE &&
+    body[1] === INVALID_SECOND_BYTE
+
+  return !isInvalidBody
+}
+
+export { isZipped, log, mergeConfig, sleep, serve, filterUrl, isValidPayload }

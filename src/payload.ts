@@ -1,3 +1,5 @@
+import { isValidPayload } from './utils'
+
 export type PagePayload = {
   headers: any
   body: Buffer
@@ -28,14 +30,23 @@ export function encodePayload({ headers, body }: PagePayload): Buffer {
  */
 export function decodePayload(payload: Buffer | undefined): PagePayload {
   if (!payload) return { headers: {}, body: Buffer.alloc(0) }
+  
   const magic = payload.slice(0, MAGIC.length)
   if (MAGIC.compare(magic) !== 0) throw new Error('Invalid payload')
+
   const headerLength = payload.readUInt32BE(MAGIC.length)
   const headerBuffer = payload.slice(
     MAGIC.length + LENGTH_SIZE,
-    MAGIC.length + LENGTH_SIZE + headerLength,
+    MAGIC.length + LENGTH_SIZE + headerLength
   )
   const headers = JSON.parse(headerBuffer.toString())
   const body = payload.slice(MAGIC.length + LENGTH_SIZE + headerLength)
-  return { headers, body }
+
+  const decodedPayload = { headers, body }
+  
+  if (!isValidPayload(decodedPayload)) {
+    throw new Error('Invalid payload: Payload does not meet validation criteria')
+  }
+
+  return decodedPayload
 }
