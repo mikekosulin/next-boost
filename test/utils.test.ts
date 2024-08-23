@@ -1,4 +1,4 @@
-import { filterUrl, isZipped, log, mergeConfig } from '../src/utils'
+import { filterUrl, isZipped, log, mergeConfig, isValidPayload } from '../src/utils'
 
 export const sleep = async (t: number) => {
   return new Promise(resolve => setTimeout(resolve, t))
@@ -75,5 +75,9 @@ describe('utils', () => {
 
     const rv3 = filterUrl(url, p => p !== 'p1')
     expect(rv3).toEqual('/path?p2=2&p2=3')
+  })
+
+  it('should return false for null payload', () => {
+    expect(isValidPayload(null)).toBe(false)
   })
 })

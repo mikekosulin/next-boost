@@ -64,7 +64,7 @@ async function sleep(ms: number) {
   return new Promise<void>(resolve => setTimeout(resolve, ms))
 }
 
-function isValidPayload(payload: { body: Buffer | null; headers: Record<string, any> | null }): boolean {
+function isValidPayload(payload: { body: Buffer | null; headers: Record<string, any> | null } | null): boolean {
   const MIN_VALID_BODY_LENGTH = 2
   const INVALID_FIRST_BYTE = 0
   const INVALID_SECOND_BYTE = 0
